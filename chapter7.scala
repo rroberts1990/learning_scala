@@ -96,7 +96,7 @@ def getChild(xml: String, name: String): Option[String] = {
 def getGithubRss(user: String, repo: String, branch: String): String = {
   val url = s"https://github.com/$user/$repo/commits/$branch.atom"
   val s = io.Source.fromURL(url)
-  val text = s.getLines.map(_.trim).mkString("")
+  val text = s.getLines.map(_.im).mkString("")
   text
 }
 
