@@ -1,5 +1,3 @@
-package chapter8
-
 import java.util.Date
 
 //1)
@@ -49,10 +47,55 @@ class Game(val name: String, val producer: String, val consoles: List[GamingCons
 //Create a Linked List
 
 class LinkedList[T](items: T*) {
- val item: T = items.head
+ val item: Option[T] = items.headOption
 
   val next: Option[LinkedList[T]] = {
     if (item.isDefined) Some(new LinkedList[T](items.tail: _*)) else None
   }
+  def foreach(f: T => Unit): Unit = {
+    for (i <- items) {
+      f(i)
+    }
+  }
+  def apply(index: Int): Option[T] = {
+    if (index == 0) item
+    else next.flatMap(_.apply(index - 1))
+  }
+}
+
+//b)
+
+abstract class LinkyListy[T]{
+  def foreach(f: T => Unit): Unit
+  def apply(i: Int) : Option[T]
+  def headoption: Option[T] = apply(0)
+}
+
+class emptyNode[T] extends LinkyListy[T] {
+  override def foreach(f: T => Unit): Unit = {}
+  override def apply(i: Int): Option[T] = None
+}
+
+class Node[T](val item: T, val next: LinkyListy[T]) extends LinkyListy[T] {
+
+  override def foreach(f: T => Unit): Unit = {
+    f(item)
+    next.foreach(f)
+  }
+  override def apply(index: Int): Option[T] = {
+    if (index < 1) Some(item) else next.apply(index - 1)
+  }
 
 }
+
+class ListCreator {
+  def create[T](items: T*): LinkyListy[T] = {
+    var result: Node[T] = new emptyNode[T]
+    for (i <- items.reverse) {
+      result = new Node[T](i, result)
+    }
+    result
+  }
+}
+
+
