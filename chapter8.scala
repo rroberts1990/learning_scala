@@ -43,3 +43,16 @@ class Game(val name: String, val producer: String, val consoles: List[GamingCons
   def isSupported(x: GamingConsole) = consoles.contains(x)
   override def toString = s"Game($name, by $maker)"
 }
+
+
+//2)
+//Create a Linked List
+
+class LinkedList[T](items: T*) {
+ val item: T = items.head
+
+  val next: Option[LinkedList[T]] = {
+    if (item.isDefined) Some(new LinkedList[T](items.tail: _*)) else None
+  }
+
+}
