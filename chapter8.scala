@@ -69,21 +69,49 @@ abstract class LinkyListy[T]{
   def foreach(f: T => Unit): Unit
   def apply(i: Int) : Option[T]
   def headoption: Option[T] = apply(0)
+
+  lazy val head: T = headoption.get
+
+  def tail: LinkyListy[T]
+
+  def filter(f: T => Boolean): LinkyListy[T] = {
+    var result: LinkyListy[T] = new emptyNode[T]
+    foreach {i =>
+    if (f(i)) result = new Node[T](i, result)
+    }
+    result
+  }
+
+  def size: Int = {
+    var count = 0
+    foreach { _ => count += 1
+    }
+    count
+  }
+
+  def map[B](f: T => B): LinkyListy[B] = {
+    var result = new emptyNode[B]
+    foreach { i =>
+      result = new Node(f(i), result)
+    }
+    result.reverse
+  }
 }
 
 class emptyNode[T] extends LinkyListy[T] {
   override def foreach(f: T => Unit): Unit = {}
   override def apply(i: Int): Option[T] = None
+  override def tail: LinkyListy[T] = null
 }
 
-class Node[T](val item: T, val next: LinkyListy[T]) extends LinkyListy[T] {
+class Node[T](val item: T, val tail: LinkyListy[T]) extends LinkyListy[T] {
 
   override def foreach(f: T => Unit): Unit = {
     f(item)
-    next.foreach(f)
+    tail.foreach(f)
   }
   override def apply(index: Int): Option[T] = {
-    if (index < 1) Some(item) else next.apply(index - 1)
+    if (index < 1) Some(item) else tail.apply(index - 1)
   }
 
 }
@@ -97,5 +125,7 @@ class ListCreator {
     result
   }
 }
+
+//3)
 
 
